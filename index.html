@@ -10,9 +10,8 @@
     <link rel="shortcut icon" href="favicon.png">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#E30613">
+    <meta name="apple-mobile-web-app-title" content="VDB Uren">
 
     <style>
         body { 
@@ -24,45 +23,30 @@
             height: 100vh; 
             margin: 0; 
             color: white; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             text-align: center;
         }
         
-        /* Het Logo */
+        /* Het Logo (Lokale link) */
         img { 
-            width: 120px; 
+            width: 150px; 
             margin-bottom: 30px; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            background: transparent;
         }
 
-        /* De Start Knop */
-        .btn {
-            background: white;
-            color: #E30613;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-        }
-        .btn:active { transform: scale(0.95); }
-
-        .loading-text { margin-top: 15px; font-size: 0.9rem; opacity: 0.8; }
+        .loading-text { margin-top: 15px; font-size: 1.1rem; font-weight: bold; }
         
-        /* Instructie tekst (alleen zichtbaar in browser) */
+        /* Instructieblok */
         .install-hint {
             margin-top: 40px;
             padding: 20px;
             background: rgba(0,0,0,0.1);
             border-radius: 12px;
             max-width: 80%;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 1px solid rgba(255,255,255,0.3);
         }
     </style>
 </head>
@@ -70,38 +54,30 @@
 
     <img src="favicon.png" alt="VDB Logo">
 
-    <a id="launchBtn" href="#" class="btn">OPEN APP</a>
+    <div id="status" class="loading-text">Even geduld...</div>
 
-    <div id="status" class="loading-text">Klaar voor start...</div>
-
-    <div id="installMsg" class="install-hint">
-        <strong>Installeren:</strong><br>
-        1. Tik op het menu (Deel / 3 puntjes)<br>
-        2. Kies "Zet op beginscherm"<br>
-        3. Open daarna via het nieuwe icoon!
+    <div id="installMsg" class="install-hint" style="display:none;">
+        <strong>Zet op Startscherm:</strong><br><br>
+        1. Tik op het <strong>Deel-icoon</strong> (blokje met pijl)<br>
+        2. Kies <strong>"Zet op beginscherm"</strong><br>
+        3. De app verschijnt nu met het Aardappel-logo!
     </div>
 
     <script>
-        // 👇👇👇 PLAK HIERONDER JOUW GOOGLE SCRIPT URL 👇👇👇
+        // 👇👇👇 PLAK HIER JOUW GOOGLE SCRIPT URL 👇👇👇
         var targetURL = "https://script.google.com/a/macros/vandenborneaardappelen.com/s/AKfycbwm6NuPQwZxB5eLJz3hoZPvJRsAKfpUIkh94v8Bfi8FcXRfJJJ_sUlwJzdioKT7OGqsKw/exec"; 
-        
-        document.getElementById('launchBtn').href = targetURL;
 
-        // FUNCTIE: Detecteer of we in 'App Modus' zitten
         function isRunningStandalone() {
             return (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone) || document.referrer.includes('android-app://');
         }
 
-        // LOGICA
         if (isRunningStandalone()) {
-            // We zijn gestart vanaf het startscherm! -> DIRECT DOORGAAN
             document.getElementById('status').innerText = "Starten...";
-            document.getElementById('installMsg').style.display = 'none'; // Verberg instructies
-            window.location.replace(targetURL);
+            // window.location.href is veiliger dan .replace voor iOS PWA's
+            window.location.href = targetURL;
         } else {
-            // We zitten in de browser (Safari/Chrome) -> WACHTEN
-            // Hierdoor heb je tijd om het icoon op te slaan.
-            document.getElementById('status').innerText = "Installeer eerst als App";
+            document.getElementById('status').innerText = "Installeer de App";
+            document.getElementById('installMsg').style.display = 'block';
         }
     </script>
 
