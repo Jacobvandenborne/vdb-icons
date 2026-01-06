@@ -3,81 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VDBorne Uren</title>
+    <title>VDB Uren</title>
 
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
-    <link rel="shortcut icon" href="favicon.png">
+    <link rel="icon" type="image/png" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
+    
+    <link rel="apple-touch-icon" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="VDB Uren">
 
     <style>
-        body { 
-            background-color: #E30613; 
-            display: flex; 
+        body {
+            background-color: #E30613; /* VDB Rood */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+            display: flex;
             flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            color: white; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
             text-align: center;
-        }
-        
-        /* Het Logo (Lokale link) */
-        img { 
-            width: 150px; 
-            margin-bottom: 30px; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-            background: transparent;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .loading-text { margin-top: 15px; font-size: 1.1rem; font-weight: bold; }
-        
-        /* Instructieblok */
-        .install-hint {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(0,0,0,0.1);
-            border-radius: 12px;
-            max-width: 80%;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            border: 1px solid rgba(255,255,255,0.3);
+        img {
+            width: 140px;
+            height: 140px;
+            border-radius: 20px;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            object-fit: contain;
         }
+
+        h1 { margin: 0 0 10px 0; font-size: 1.5rem; }
+        p { opacity: 0.9; line-height: 1.5; margin-bottom: 30px; }
+
+        .arrow { font-size: 2rem; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+
+        /* Loader voor als we doorsturen */
+        .loader {
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none; /* Standaard verborgen */
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Verberg instructies als we aan het laden zijn */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <img src="favicon.png" alt="VDB Logo">
+    <img src="https://jacobvandenborne.github.io/vdb-icons/favicon.png" alt="Logo">
 
-    <div id="status" class="loading-text">Even geduld...</div>
+    <div id="instruction-screen">
+        <h1>Installeer de App</h1>
+        <p>
+            1. Tik op het <strong>Deel-icoon</strong> (vierkantje met pijl)<br>
+            2. Kies <strong>"Zet op beginscherm"</strong><br>
+            3. Open daarna de app via het nieuwe icoon.
+        </p>
+        <div class="arrow">👇</div>
+    </div>
 
-    <div id="installMsg" class="install-hint" style="display:none;">
-        <strong>Zet op Startscherm:</strong><br><br>
-        1. Tik op het <strong>Deel-icoon</strong> (blokje met pijl)<br>
-        2. Kies <strong>"Zet op beginscherm"</strong><br>
-        3. De app verschijnt nu met het Aardappel-logo!
+    <div id="loading-screen" class="hidden">
+        <div class="loader" style="display:block; margin: 0 auto;"></div>
+        <p style="margin-top:20px;">App starten...</p>
     </div>
 
     <script>
-        // 👇👇👇 PLAK HIER JOUW GOOGLE SCRIPT URL 👇👇👇
-        var targetURL = "https://script.google.com/a/macros/vandenborneaardappelen.com/s/AKfycbwDOpD94LI72NSmqPg_p59fetuIzWWjkReA2r7vvm_n92fRiYWHiX2xSrDj_ogKTOENRg/exec"; 
+        // 👇👇👇 PLAK HIERONDER JOUW GOOGLE SCRIPT URL 👇👇👇
+        var TARGET_URL = "https://script.google.com/a/macros/vandenborneaardappelen.com/s/AKfycbwDOpD94LI72NSmqPg_p59fetuIzWWjkReA2r7vvm_n92fRiYWHiX2xSrDj_ogKTOENRg/exec"; 
 
+        // Deze functie controleert: "Ben ik een App?"
         function isRunningStandalone() {
-            return (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone) || document.referrer.includes('android-app://');
+            return (window.matchMedia('(display-mode: standalone)').matches) || 
+                   (window.navigator.standalone === true);
         }
 
+        // DE LOGICA
         if (isRunningStandalone()) {
-            document.getElementById('status').innerText = "Starten...";
-            // window.location.href is veiliger dan .replace voor iOS PWA's
-            window.location.href = targetURL;
+            // JA: We zijn gestart vanaf het startscherm!
+            // 1. Verberg de instructies
+            document.getElementById('instruction-screen').classList.add('hidden');
+            // 2. Toon de loader
+            document.getElementById('loading-screen').classList.remove('hidden');
+            // 3. Stuur door naar Google (De "Redirect")
+            window.location.replace(TARGET_URL);
         } else {
-            document.getElementById('status').innerText = "Installeer de App";
-            document.getElementById('installMsg').style.display = 'block';
+            // NEE: We zitten nog in Safari/Chrome browser.
+            // Doe niets, laat de instructies staan zodat de gebruiker kan installeren.
+            // Dit geeft de telefoon ook tijd om het 'favicon.png' te vinden.
         }
     </script>
 
