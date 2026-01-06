@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>VDBorne Uren</title>
 
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="shortcut icon" href="favicon.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VDB Uren">
+
+    <style>
+        body { background-color: #E30613; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; font-family: sans-serif; flex-direction: column; }
+        .spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        img { width: 100px; margin-bottom: 20px; border-radius: 15px; }
+    </style>
+
+    <script>
+        // 👇👇👇 PLAK HIER ONDER JOUW GOOGLE SCRIPT URL 👇👇👇
+        var targetURL = "https://script.google.com/a/macros/vandenborneaardappelen.com/s/AKfycbwm6NuPQwZxB5eLJz3hoZPvJRsAKfpUIkh94v8Bfi8FcXRfJJJ_sUlwJzdioKT7OGqsKw/exec"; 
+        
+        // Direct doorsturen
+        window.location.replace(targetURL);
+    </script>
+</head>
+<body>
+    <img src="favicon.png" alt="Logo">
+    <div class="spinner"></div>
+    <div>Laden...</div>
+</body>
+</html>
