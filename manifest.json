@@ -1,7 +1,7 @@
 {
   "name": "VDB Uren",
   "short_name": "VDB Uren",
-  "start_url": "./index.html",
+  "start_url": "./index.html?source=pwa",
   "display": "standalone",
   "background_color": "#E30613",
   "theme_color": "#E30613",
