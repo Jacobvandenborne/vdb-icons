@@ -10,16 +10,13 @@
     <link rel="icon" type="image/png" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
     <link rel="shortcut icon" type="image/png" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
     <link rel="apple-touch-icon" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
-    <link rel="apple-touch-icon-precomposed" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
-
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#E30613">
 
     <style>
         body {
-            background-color: #E30613; /* VDB Rood */
+            background-color: #E30613;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: white;
             display: flex;
@@ -63,7 +60,6 @@
 
         .hidden { display: none !important; }
 
-        /* Noodknop */
         .manual-btn {
             background: rgba(255,255,255,0.2);
             border: 1px solid white;
@@ -76,7 +72,6 @@
             margin-top: 20px;
             display: inline-block;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
     </style>
 </head>
@@ -87,52 +82,46 @@
     <div id="instruction-screen">
         <h1>Installeer de App</h1>
         <p>
-            1. Tik op het <strong>Deel-icoon</strong> of de <strong>3 puntjes</strong><br>
+            1. Tik op het menu (3 puntjes / Deel)<br>
             2. Kies <strong>"Toevoegen aan startscherm"</strong><br>
-            3. Open daarna de app via het nieuwe icoon.
+            3. Wacht even tot het icoontje verschijnt.<br>
+            4. Klik op "Toevoegen".
         </p>
         <div class="arrow">👇</div>
         
         <br><br>
-        <button class="manual-btn" onclick="forceStart()">Start App Nu</button>
+        <button class="manual-btn" onclick="startApp()">Start App in Browser</button>
     </div>
 
     <div id="loading-screen" class="hidden">
         <div class="loader" style="display:block; margin: 0 auto;"></div>
-        <p style="margin-top:20px;">App starten...</p>
+        <p style="margin-top:20px;">Laden...</p>
     </div>
 
     <script>
         // 👇👇👇 PLAK HIERONDER JOUW GOOGLE SCRIPT URL 👇👇👇
         var TARGET_URL = "https://script.google.com/a/macros/vandenborneaardappelen.com/s/AKfycbwc9fsdkvnXd7WR2rL-F4k24QaGWP0-zplIBjwz3Tc9zgwNBpy8DACXSGbTGCEG9kxw7w/exec"; 
 
-        function isRunningStandalone() {
-            // Check voor iOS (standalone) OF Android (display-mode: standalone)
-            return (window.matchMedia('(display-mode: standalone)').matches) || 
-                   (window.navigator.standalone === true);
-        }
-
         function startApp() {
             document.getElementById('instruction-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
-            // Vervang pagina zodat 'terug' knop niet teruggaat naar installatie
             window.location.replace(TARGET_URL);
         }
 
-        // LOGICA:
-        // We starten ALLEEN automatisch als de browser zegt: "Ik ben een app".
-        // We doen GEEN checks meer op 'referrer' of 'android', want dat gaf fouten.
+        // DE OPLOSSING:
+        // We kijken of de URL '?source=pwa' bevat.
+        // Dit staat ALLEEN in de manifest.json, dus alleen als je via het icoontje komt.
         
-        if (isRunningStandalone()) {
-            startApp();
-        } 
+        const urlParams = new URLSearchParams(window.location.search);
+        const isPWA = urlParams.get('source') === 'pwa';
         
-        // Als we NIET standalone zijn, blijven we gewoon op het installatiescherm staan.
-        // De gebruiker kan dan installeren, of op de knop drukken.
+        // Ook ondersteuning voor iOS (die gebruikt geen manifest parameter maar navigator.standalone)
+        const isIOSApp = (window.navigator.standalone === true);
 
-        function forceStart() {
+        if (isPWA || isIOSApp) {
             startApp();
         }
+        // Anders: Doe niets! Laat het instructiescherm zien.
     </script>
 
 </body>
