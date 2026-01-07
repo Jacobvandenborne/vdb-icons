@@ -63,18 +63,20 @@
 
         .hidden { display: none !important; }
 
-        /* Noodknop voor Android */
+        /* Noodknop */
         .manual-btn {
             background: rgba(255,255,255,0.2);
             border: 1px solid white;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: bold;
             margin-top: 20px;
             display: inline-block;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
     </style>
 </head>
@@ -91,8 +93,8 @@
         </p>
         <div class="arrow">👇</div>
         
-        <br>
-        <button class="manual-btn" onclick="forceStart()">Ik heb de app al, start nu!</button>
+        <br><br>
+        <button class="manual-btn" onclick="forceStart()">Start App Nu</button>
     </div>
 
     <div id="loading-screen" class="hidden">
@@ -102,9 +104,10 @@
 
     <script>
         // 👇👇👇 PLAK HIERONDER JOUW GOOGLE SCRIPT URL 👇👇👇
-        var TARGET_URL = "https://script.google.com/macros/s/AKfycbwc9fsdkvnXd7WR2rL-F4k24QaGWP0-zplIBjwz3Tc9zgwNBpy8DACXSGbTGCEG9kxw7w/exec"; 
+        var TARGET_URL = "https://script.google.com/a/macros/vandenborneaardappelen.com/s/AKfycbwc9fsdkvnXd7WR2rL-F4k24QaGWP0-zplIBjwz3Tc9zgwNBpy8DACXSGbTGCEG9kxw7w/exec"; 
 
         function isRunningStandalone() {
+            // Check voor iOS (standalone) OF Android (display-mode: standalone)
             return (window.matchMedia('(display-mode: standalone)').matches) || 
                    (window.navigator.standalone === true);
         }
@@ -112,21 +115,21 @@
         function startApp() {
             document.getElementById('instruction-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
-            // Vervang huidige pagina zodat back-button niet werkt
+            // Vervang pagina zodat 'terug' knop niet teruggaat naar installatie
             window.location.replace(TARGET_URL);
         }
 
-        // 1. Automatische check
+        // LOGICA:
+        // We starten ALLEEN automatisch als de browser zegt: "Ik ben een app".
+        // We doen GEEN checks meer op 'referrer' of 'android', want dat gaf fouten.
+        
         if (isRunningStandalone()) {
             startApp();
-        } else {
-            // Android Chrome checkt soms 'referrer'
-            if (document.referrer.includes('android-app://')) {
-                startApp();
-            }
-        }
+        } 
+        
+        // Als we NIET standalone zijn, blijven we gewoon op het installatiescherm staan.
+        // De gebruiker kan dan installeren, of op de knop drukken.
 
-        // 2. Handmatige start (Noodoplossing)
         function forceStart() {
             startApp();
         }
