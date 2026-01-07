@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VDB Uren</title>
 
+    <link rel="manifest" href="manifest.json">
+
     <link rel="icon" type="image/png" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
     <link rel="shortcut icon" type="image/png" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
-    
     <link rel="apple-touch-icon" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
     <link rel="apple-touch-icon-precomposed" href="https://jacobvandenborne.github.io/vdb-icons/favicon.png">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="VDB Uren">
+    <meta name="theme-color" content="#E30613">
 
     <style>
         body {
@@ -49,7 +50,6 @@
         .arrow { font-size: 2rem; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
 
-        /* Loader voor als we doorsturen */
         .loader {
             border: 5px solid rgba(255,255,255,0.3);
             border-top: 5px solid white;
@@ -57,12 +57,25 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            display: none; /* Standaard verborgen */
+            display: none; 
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Verberg instructies als we aan het laden zijn */
         .hidden { display: none !important; }
+
+        /* Noodknop voor Android */
+        .manual-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            display: inline-block;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -72,11 +85,14 @@
     <div id="instruction-screen">
         <h1>Installeer de App</h1>
         <p>
-            1. Tik op het <strong>Deel-icoon</strong> (vierkantje met pijl)<br>
-            2. Kies <strong>"Zet op beginscherm"</strong><br>
+            1. Tik op het <strong>Deel-icoon</strong> of de <strong>3 puntjes</strong><br>
+            2. Kies <strong>"Toevoegen aan startscherm"</strong><br>
             3. Open daarna de app via het nieuwe icoon.
         </p>
         <div class="arrow">👇</div>
+        
+        <br>
+        <button class="manual-btn" onclick="forceStart()">Ik heb de app al, start nu!</button>
     </div>
 
     <div id="loading-screen" class="hidden">
@@ -86,27 +102,33 @@
 
     <script>
         // 👇👇👇 PLAK HIERONDER JOUW GOOGLE SCRIPT URL 👇👇👇
-        var TARGET_URL = "https://script.google.com/macros/s/AKfycbziRL0-vlSB1v4zCZTnTwGm7sCKA7AGHxJgT73JzNKumBjOEnTV_8AnlNZOrseCMDxY7A/exec"; 
+        var TARGET_URL = "https://script.google.com/macros/s/AKfycbwc9fsdkvnXd7WR2rL-F4k24QaGWP0-zplIBjwz3Tc9zgwNBpy8DACXSGbTGCEG9kxw7w/exec"; 
 
-        // Deze functie controleert: "Ben ik een App?"
         function isRunningStandalone() {
             return (window.matchMedia('(display-mode: standalone)').matches) || 
                    (window.navigator.standalone === true);
         }
 
-        // DE LOGICA
-        if (isRunningStandalone()) {
-            // JA: We zijn gestart vanaf het startscherm!
-            // 1. Verberg de instructies
+        function startApp() {
             document.getElementById('instruction-screen').classList.add('hidden');
-            // 2. Toon de loader
             document.getElementById('loading-screen').classList.remove('hidden');
-            // 3. Stuur door naar Google (De "Redirect")
+            // Vervang huidige pagina zodat back-button niet werkt
             window.location.replace(TARGET_URL);
+        }
+
+        // 1. Automatische check
+        if (isRunningStandalone()) {
+            startApp();
         } else {
-            // NEE: We zitten nog in Safari/Chrome browser.
-            // Doe niets, laat de instructies staan zodat de gebruiker kan installeren.
-            // Dit geeft de telefoon ook tijd om het 'favicon.png' te vinden.
+            // Android Chrome checkt soms 'referrer'
+            if (document.referrer.includes('android-app://')) {
+                startApp();
+            }
+        }
+
+        // 2. Handmatige start (Noodoplossing)
+        function forceStart() {
+            startApp();
         }
     </script>
 
