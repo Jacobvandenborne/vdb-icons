@@ -99,30 +99,25 @@
     </div>
 
     <script>
-        // 👇 JOUW GOOGLE SCRIPT URL 👇
-        var TARGET_URL = "https://script.google.com/macros/s/AKfycbzf6ldRRHGkoZW_oTespVP61HICLaZRPMYZJeIuecEqunW68q7dIDrQBNjGFAhg0JIeXg/exec"; 
+        // ✅ DE VERBETERDE WORKSPACE URL (VOORKOMT WIT SCHERM)
+        var TARGET_URL = "https://script.google.com/a/macros/vandenborneaardappelen.com/s/AKfycbzf6ldRRHGkoZW_oTespVP61HICLaZRPMYZJeIuecEqunW68q7dIDrQBNjGFAhg0JIeXg/exec"; 
 
         function startApp() {
             document.getElementById('instruction-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
-            // We gebruiken replace() zodat de 'terug' knop in de browser niet 
-            // constant terugvliegt naar het 'Laden...' scherm.
+            // Gebruik replace voor een schone overgang
             window.location.replace(TARGET_URL); 
         }
 
-        // 1. Check op ?source=pwa (als Android Chrome de parameter netjes meestuurt)
+        // 1. Check op ?source=pwa (uit manifest.json)
         const urlParams = new URLSearchParams(window.location.search);
         const isPWA = urlParams.get('source') === 'pwa';
         
-        // 2. iOS Detectie (Apple specifiek)
-        const isIOSApp = (window.navigator.standalone === true);
+        // 2. Detectie of de app al als 'Snelkoppeling' op het scherm staat (Android & iOS)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-        // 3. ANDROID & MODERNE BROWSER Detectie
-        // Checkt of de site als een losse app (display-mode: standalone) draait.
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-
-        // Als aan één van de drie voorwaarden wordt voldaan: direct starten!
-        if (isPWA || isIOSApp || isStandalone) {
+        // Als een medewerker de app al heeft toegevoegd: direct starten!
+        if (isPWA || isStandalone) {
             startApp();
         }
     </script>
