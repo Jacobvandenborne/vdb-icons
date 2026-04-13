@@ -99,29 +99,32 @@
     </div>
 
     <script>
-        // 👇👇👇 PLAK HIERONDER JOUW GOOGLE SCRIPT URL 👇👇👇
+        // 👇 JOUW GOOGLE SCRIPT URL 👇
         var TARGET_URL = "https://script.google.com/macros/s/AKfycbzf6ldRRHGkoZW_oTespVP61HICLaZRPMYZJeIuecEqunW68q7dIDrQBNjGFAhg0JIeXg/exec"; 
 
         function startApp() {
             document.getElementById('instruction-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
-            window.location.replace(TARGET_URL);
+            // We gebruiken replace() zodat de 'terug' knop in de browser niet 
+            // constant terugvliegt naar het 'Laden...' scherm.
+            window.location.replace(TARGET_URL); 
         }
 
-        // DE OPLOSSING:
-        // We kijken of de URL '?source=pwa' bevat.
-        // Dit staat ALLEEN in de manifest.json, dus alleen als je via het icoontje komt.
-        
+        // 1. Check op ?source=pwa (als Android Chrome de parameter netjes meestuurt)
         const urlParams = new URLSearchParams(window.location.search);
         const isPWA = urlParams.get('source') === 'pwa';
         
-        // Ook ondersteuning voor iOS (die gebruikt geen manifest parameter maar navigator.standalone)
+        // 2. iOS Detectie (Apple specifiek)
         const isIOSApp = (window.navigator.standalone === true);
 
-        if (isPWA || isIOSApp) {
+        // 3. ANDROID & MODERNE BROWSER Detectie
+        // Checkt of de site als een losse app (display-mode: standalone) draait.
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+
+        // Als aan één van de drie voorwaarden wordt voldaan: direct starten!
+        if (isPWA || isIOSApp || isStandalone) {
             startApp();
         }
-        // Anders: Doe niets! Laat het instructiescherm zien.
     </script>
 
 </body>
